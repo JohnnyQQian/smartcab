@@ -44,10 +44,10 @@ class LearningAgent(Agent):
             self.alpha = 0
         else:
             #self.epsilon = self.epsilon - 0.05 # linear decaying function
-            self.epsilon = self.alpha ** self.trial
+            #self.epsilon = self.alpha ** self.trial
             #self.epsilon = 1 / self.trial ** 2
-            self.epsilon = math.exp(- self.alpha * self.trial)
-            #self.epsilon = math.cos(self.alpha * self.trial)
+            #self.epsilon = math.exp(- self.alpha * self.trial)
+            self.epsilon = math.cos(self.alpha * self.trial)
 
         self.trial += 1
 
@@ -67,7 +67,8 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, inputs['light'], inputs['oncoming'])
+        state = (waypoint, inputs['light'], inputs['oncoming'], inputs['left'], 
+                inputs['right'])
 
         return state
 
@@ -171,7 +172,7 @@ def run():
     #   verbose     - set to True to display additional output from the simulation
     #   num_dummies - discrete number of dummy agents in the environment, default is 100
     #   grid_size   - discrete number of intersections (columns, rows), default is (8, 6)
-    env = Environment(verbose=True, num_dummies=50, grid_size=(7,5))
+    env = Environment(verbose=True, num_dummies=100, grid_size=(7,5))
     
     ##############
     # Create the driving agent
@@ -179,7 +180,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, epsilon=1, alpha=0.01)
+    agent = env.create_agent(LearningAgent, learning=True, epsilon=1, alpha=0.0005)
     
     ##############
     # Follow the driving agent
@@ -194,14 +195,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, display=True, log_metrics=True, optimized=True)
+    sim = Simulator(env, update_delay=0.0001, display=False, log_metrics=True, optimized=True)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(tolerance=0.05, n_test=10)
+    sim.run(tolerance=0.05, n_test=50)
 
 
 if __name__ == '__main__':
